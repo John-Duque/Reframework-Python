@@ -1,0 +1,13 @@
+{
+  "Settings": {
+    "LogFile": "Logs/process.log",
+    "DataSource": "Data/Transactions.csv",
+    "MaxRetries": 3,
+    "UseSelenium": true,
+    "SeleniumBrowser": "chrome"
+  },
+  "Constants": {
+    "RetryDelay": 5,
+    "MaxTransactionTimeout": 300
+  }
+}

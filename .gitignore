@@ -1,0 +1,171 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.dll
+*.so
+*.dylib
+
+# Distribution / packaging
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+wheelhouse/
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*,cover
+.hypothesis/
+.pytest_cache/
+.pyre/
+
+# Static analysis tools
+.mypy_cache/
+.dmypy.json
+pyrightcache/
+
+# Jupyter Notebook / IPython
+.ipynb_checkpoints/
+*.nbconvert.ipynb
+.jupyter/
+.jupyter_cache/
+
+# pyenv and virtualenv
+.python-version
+pip-selfcheck.json
+venv/
+ENV/
+.venv/
+env.bak/
+venv.bak/
+
+# Poetry
+poetry.lock
+.cache/pypoetry/
+
+# Pipenv
+Pipfile.lock
+
+# dotenv
+.env
+.env.*
+
+# Logs and databases
+*.log
+*.sql
+*.sqlite
+*.sqlite3
+*.db
+
+# Security-related files
+*.pem
+*.pub
+*.key
+
+# Django / Flask
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+instance/
+.webassets-cache/
+
+# Scrapy
+.scrapy/
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+target/
+
+# VSCode
+.vscode/
+.history/
+
+# JetBrains IDEs (IntelliJ, PyCharm, etc.)
+.idea/
+.idea_modules/
+*.iws
+*.iml
+*.ipr
+out/
+
+# Eclipse
+.project
+.pydevproject
+
+# Visual Studio
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Xcode
+*.pbxproj
+*.xcworkspace/
+xcuserdata/
+*.xcuserstate
+
+# macOS files
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
+
+# Windows files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux files
+*~
+
+# Temporary files and backups
+*.bak
+*.swp
+*.swo
+*.orig
+*.save
+
+# EditorConfig files
+.editorconfig
+.cspell.json
+
+# AWS CLI and Terraform
+*.terraform/
+.terraform.lock.hcl
+.aws/
