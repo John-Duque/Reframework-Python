@@ -8,9 +8,9 @@ class EndProcess:
     # Classe responsável por finalizar o processo com registro no log.
 
     logger: logging.Logger  # Logger para registrar eventos
-    driver: WebDriver
+    driver: WebDriver  # Driver do WebDriver para controle do navegador
 
-    def __init__(self, driver: WebDriver,logger: logging.Logger) -> None:
+    def __init__(self, driver: WebDriver, logger: logging.Logger) -> None:
         self.logger = logger
         self.driver = driver
 

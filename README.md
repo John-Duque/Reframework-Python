@@ -14,6 +14,7 @@ Um **Robust Framework (ReFramework)** para automação de processos inspirado no
 - [Instalação e Execução](#-instalação-e-execução)
 - [Funcionamento](#-funcionamento)
 - [Componentes Principais](#-componentes-principais)
+- [Conexão com Bancos de Dados](#-conexão-com-bancos-de-dados)
 - [Exemplo de Uso](#-exemplo-de-uso)
 - [Tratamento de Exceções](#-tratamento-de-exceções)
 - [Testes e Cobertura](#-testes-e-cobertura)
@@ -28,6 +29,9 @@ Um **Robust Framework (ReFramework)** para automação de processos inspirado no
 
 - **Controle Transacional**: Estrutura organizada para automação por transações.
 - **Automação com Selenium**: Automação de interações em páginas web.
+- **Conexão com Bancos de Dados**: 
+  - Suporte para **MySQL**, **SQL Server** e **Oracle**.
+  - **Execução de Queries e Procedures** com parâmetros.
 - **Tratamento de Exceções**: Tratamento de erros de negócio e técnicos.
 - **Logging Centralizado**: Logs detalhados para auditoria.
 - **Fácil de Expandir**: Modularidade para novos componentes e serviços.
@@ -40,25 +44,26 @@ Um **Robust Framework (ReFramework)** para automação de processos inspirado no
 ```plaintext
 reframework_python/
 │
-├── Components/                # Componentes específicos de automação
+├── Components/                # Componentes específicos
 │   └── google_page.py          # Automação no Google
 │
-├── Data/                      # Arquivos de configuração e dados
-│   └── config.json             # Configurações do framework
+├── Data/                      # Arquivos de dados e configuração
+│   └── config.json             # Configuração do framework
 │
 ├── Framework/                 # Módulos principais
 │   ├── BasePage.py             # Classe base para páginas web
 │   ├── GetTransaction.py       # Gerenciamento de transações
 │   ├── EndProcess.py           # Finalização do processo
 │   ├── ProcessTransaction.py   # Lógica das transações
-│   ├── Selenium.py             # Configuração do Selenium WebDriver
+│   ├── Selenium.py             # Configuração do Selenium
 │   ├── Exceptions.py           # Exceções personalizadas
-│   └── Init.py                 # Inicialização e configuração
+│   ├── Init.py                 # Inicialização do framework
+│   └── DatabaseConnection.py  # Conexão com bancos de dados
 │
 ├── Logs/                      # Logs de execução
 │   └── process.log             # Registro de eventos
 ├── Main.py                    # Ponto de entrada principal
-├── requirements.txt           # Dependências do projeto
+├── requirements.txt           # Dependências
 └── README.md                  # Documentação
 ```
 
@@ -71,9 +76,12 @@ reframework_python/
 ### 2. Clonar o Repositório
 
 ```bash
-    git clone https://github.com/seuusuario/reframework_python.git
-    cd reframework_python
-```        
+    git clone https://github.com/John-Duque/Reframework-Python
+```  
+
+```bash
+    cd Reframework-Python
+```      
 
 ### 3. Configurar config.json
 
@@ -198,6 +206,95 @@ reframework_python/
 ### ProcessTransaction.py
 
 - implementa a lógica de negócios para cada transação.
+
+## 🗄 **Conexão com Bancos de Dados**
+
+- O framework oferece suporte para MySQL, SQL Server e Oracle. Ele permite a execução de queries e procedures diretamente do Python.
+
+### Exemplo de Conexão e Query
+
+#### MySQL ou SQL SERVER
+
+```python
+from Framework.database_connection import DatabaseConnection
+
+with DatabaseConnection(
+    db_type="mysql",
+    host="localhost",
+    database="meubanco",
+    user="meuusuario",
+    password="minhasenha"
+) as db:
+    results = db.execute_query("SELECT * FROM minha_tabela")
+    for row in results:
+        print(row)
+```
+
+#### Oracle
+
+```python
+with DatabaseConnection(
+    db_type="oracle",
+    host="localhost",
+    database="XE",
+    user="meuusuario",
+    password="minhasenha",
+    port=1521
+) as db:
+    resultados = db.execute_query("SELECT * FROM produtos")
+```
+
+### Exemplo de Conexão e Procedure
+
+#### MySQL ou SQL SERVER
+
+```python
+with DatabaseConnection(
+    db_type="mysql",
+    host="localhost",
+    database="meubanco",
+    user="meuusuario",
+    password="minhasenha"
+) as db:
+    db.execute_procedure("nome_da_procedure", params={"param1": 123, "param2": "valor"})
+```
+
+#### Oracle
+
+```python
+with DatabaseConnection(
+    db_type="oracle",
+    host="localhost",
+    database="XE",
+    user="meuusuario",
+    password="minhasenha"
+) as db:
+    db.execute_procedure("nome_da_procedure", params={"param1": 123})
+```
+
+### Como funciona o gerenciamento de contexto (with)
+
+O uso de with junto com os métodos __enter__ e __exit__ faz parte do **gerenciamento de contexto** no Python.
+Esse mecanismo é utilizado para **garantir que certos recursos sejam liberados corretamente**,
+como conexões de banco de dados, arquivos abertos ou qualquer operação que precise de uma finalização segura
+(fechamento, commit, etc.).
+
+Quando você usa um with statement para trabalhar com um objeto que implementa os métodos especiais __enter__ e __exit__,
+ele segue este fluxo:
+
+1.	__enter__:
+
+- É chamado no início do bloco with.
+- Retorna o recurso que será utilizado dentro do bloco.
+
+2.	Bloco de Código:
+
+- Executa o código dentro do with.
+- Se ocorrer alguma exceção, ela é passada para o método __exit__.
+
+3.	__exit__:
+- É chamado automaticamente ao final do bloco with, mesmo que ocorra uma exceção.
+- É responsável por fechar ou liberar recursos de forma segura.
 
 ## 🎯 **Roadmap**
 
