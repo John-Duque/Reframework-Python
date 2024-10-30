@@ -21,13 +21,13 @@ class ProcessTransaction:
         for transaction in transaction:
             try:
                 # Executa o processamento da transação com validações e tratamento de exceções.
-                self.logger.info(f"Processando transação {transaction['id']}")
+                self.logger.info(f"Processando transação {transaction[0]}")
                 self.google_page.open()
-                self.google_page.search(transaction['description'])
-                self.logger.info(f" success {transaction['id']}")
+                self.google_page.search(transaction[1])
+                self.logger.info(f" success {transaction[0]}")
 
             except BusinessException as e:
-                self.logger.error(f"Erro de negócio na transação {transaction['id']}: {str(e)}")
+                self.logger.error(f"Erro de negócio na transação {transaction[0]}: {str(e)}")
                 raise e  # Relança a exceção para ser tratada em outro nível
 
             except Exception as e:

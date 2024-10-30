@@ -1,37 +1,130 @@
 import logging
 from typing import Optional, Any, Union, Dict
-
 import cx_Oracle
 import mysql.connector
 import pyodbc
 
 
 class DatabaseConnection:
+    # Classe responsável por gerenciar a conexão com o banco de dados.
+    # Permite conexão via parâmetros individuais ou connection string.
+
+    # Tipos utilizados dentro da classe
+    DbConnectionType = Optional[
+        Union[mysql.connector.MySQLConnection, pyodbc.Connection, cx_Oracle.Connection]
+    ]
+    ConfigType = Dict[str, Any]
+
+    # Declaração dos atributos da classe
     db_type: str  # Tipo do banco de dados (mysql, sqlserver, oracle).
     host: str  # Endereço do servidor.
     database: str  # Nome do banco de dados.
     user: str  # Usuário de conexão.
     password: str  # Senha do usuário.
-    port: Optional[int]  # Porta do banco (padrão depende do tipo).
+    port: Optional[int]  # Porta do banco de dados.
     pool_size: int  # Tamanho do pool de conexão.
-    connection: Optional[Union[mysql.connector.MySQLConnection, pyodbc.Connection, cx_Oracle.Connection]]
-    logger: logging.Logger
+    connection: DbConnectionType  # Conexão com o banco.
+    logger: logging.Logger  # Logger para monitoramento.
+    config: Dict[str, Any]
 
-    def __init__(self, logger: logging.Logger, db_type: str, host: str, database: str, user: str, password: str,
-                 port: Optional[int] = None,
-                 pool_size: int = 5) -> None:
-        # Inicializa a classe de conexão com parâmetros específicos.
-        self.db_type = db_type.lower()
-        self.host = host
-        self.database = database
-        self.user = user
-        self.password = password
-        self.port = port
-        self.pool_size = pool_size
-        self.connection = None
+    def __init__(self, config: Dict[str, Any], logger: logging.Logger) -> None:
+
+        # Inicializa a conexão com o banco de dados.
+
+        self.connection: DatabaseConnection.DbConnectionType = None
         self.logger = logger
+        self.config = config
 
-    def __enter__(self) -> Any:
+        # Configura a conexão baseada na connection string ou nos parâmetros individuais
+        self._configure_connection(
+            self.config["Settings"]["Database"]["Parameters"]["Type"],
+            self.config["Settings"]["Database"]["Parameters"]["Host"],
+            self.config["Settings"]["Database"]["Parameters"]["Database"],
+            self.config["Settings"]["Database"]["Parameters"]["User"],
+            self.config["Settings"]["Database"]["Parameters"]["Password"],
+            self.config["Settings"]["Database"]["Parameters"]["Port"],
+            self.config["Settings"]["Database"]["Parameters"]["PoolSize"],
+            self.config["Settings"]["Database"]["ConnectionString"]
+        )
+
+    def _configure_connection(
+            self,
+            db_type: Optional[str] = None,
+            host: Optional[str] = None,
+            database: Optional[str] = None,
+            user: Optional[str] = None,
+            password: Optional[str] = None,
+            port: Optional[int] = None,
+            pool_size: int = 5,
+            connection_string: Optional[str] = None
+    ) -> None:
+        # Configura a conexão com base nos parâmetros ou na connection string.
+        if connection_string:
+            self._parse_connection_string(connection_string)
+            self.pool_size = pool_size
+        else:
+            # Configuração manual via parâmetros individuais
+            self.db_type = db_type.lower()
+            self.host = host
+            self.database = database
+            self.user = user
+            self.password = password
+            self.port = port
+            self.pool_size = pool_size
+
+    def _parse_connection_string(self, connection_string: str) -> None:
+        # Analisa a connection string e configura os atributos.
+        try:
+            if connection_string.startswith("mysql://"):
+                self.logger.info("Usando conexão MySQL via connection string.")
+                user_pass, host_db = connection_string.split("://")[1].split('@')
+                user, password = user_pass.split(':')
+                host, port_db = host_db.split(':')
+                port, database = port_db.split('/')
+
+                self.db_type = "mysql"
+                self.host = host
+                self.database = database
+                self.user = user
+                self.password = password
+                self.port = int(port)
+
+            elif connection_string.startswith("mssql+pyodbc://"):
+                self.logger.info("Usando conexão SQL Server via connection string.")
+                user_pass, host_db = connection_string.split('@')[0].split('//')[1], connection_string.split('@')[1]
+                user, password = user_pass.split(':')
+                host, port_db = host_db.split(':')
+                port, database = port_db.split('/')
+
+                self.db_type = "sqlserver"
+                self.host = host
+                self.database = database
+                self.user = user
+                self.password = password
+                self.port = int(port)
+
+            elif connection_string.startswith("oracle://"):
+                self.logger.info("Usando conexão Oracle via connection string.")
+                user_pass, host_db = connection_string.split("://")[1].split('@')
+                user, password = user_pass.split(':')
+                host, port_sid = host_db.split(':')
+                port, sid = port_sid.split('/')
+
+                self.db_type = "oracle"
+                self.host = host
+                self.database = sid
+                self.user = user
+                self.password = password
+                self.port = int(port)
+
+            else:
+                raise ValueError(f"Tipo de connection string não suportado: {connection_string}")
+
+        except Exception as e:
+            self.logger.error(f"Erro ao analisar a connection string: {str(e)}")
+            raise
+
+    def __enter__(self) -> "DatabaseConnection":
         # Abre a conexão ao entrar no contexto.
         self.connect()
         return self
@@ -41,7 +134,7 @@ class DatabaseConnection:
         self.close()
 
     def connect(self) -> None:
-        """Estabelece a conexão com o banco de dados."""
+        # Estabelece a conexão com o banco de dados.
         try:
             match self.db_type:
                 case "mysql":
@@ -74,14 +167,8 @@ class DatabaseConnection:
                 case _:
                     raise ValueError(f"Banco de dados '{self.db_type}' não é suportado.")
 
-        except mysql.connector.Error as e:
-            self.logger.error(f"Erro ao conectar ao MySQL: {str(e)}")
-            raise
-        except pyodbc.Error as e:
-            self.logger.error(f"Erro ao conectar ao SQL Server: {str(e)}")
-            raise
-        except cx_Oracle.Error as e:
-            self.logger.error(f"Erro ao conectar ao Oracle: {str(e)}")
+        except (mysql.connector.Error, pyodbc.Error, cx_Oracle.Error) as e:
+            self.logger.error(f"Erro ao conectar ao banco de dados: {str(e)}")
             raise
         except Exception as e:
             self.logger.error(f"Erro inesperado: {str(e)}")

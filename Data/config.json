@@ -4,7 +4,19 @@
     "DataSource": "Data/Transactions.csv",
     "MaxRetries": 3,
     "UseSelenium": true,
-    "SeleniumBrowser": "chrome"
+    "SeleniumBrowser": "chrome",
+    "Database": {
+      "ConnectionString": "mysql://root:03200109@localhost:3306/credit_db",
+      "Parameters": {
+        "Type": "mysql",
+        "Host": "localhost",
+        "Database": "credit_db",
+        "User": "root",
+        "Password": "03200109",
+        "Port": 3306,
+        "PoolSize": 5
+      }
+    }
   },
   "Constants": {
     "RetryDelay": 5,

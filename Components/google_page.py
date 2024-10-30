@@ -8,12 +8,10 @@ from Framework.BasePage import BasePage
 
 class GooglePage(BasePage):
     # Declaração das variáveis de instância com tipos
-    driver: WebDriver  # Driver do WebDriver para controle do navegador
     search_box: Tuple[str, str]  # Localizador para a caixa de pesquisa
 
     def __init__(self, driver: WebDriver, logger: logging.Logger) -> None:
         super().__init__(driver, logger)
-        self.driver = driver  # Inicializa o driver
         self.search_box = ("name", "q")  # Define o localizador da caixa de pesquisa
 
     def open(self) -> None:
