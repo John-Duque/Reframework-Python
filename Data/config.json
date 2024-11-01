@@ -6,7 +6,7 @@
     "UseSelenium": true,
     "SeleniumBrowser": "chrome",
     "Database": {
-      "ConnectionString": "mysql://root:03200109@localhost:3306/credit_db",
+      "ConnectionString": "",
       "Parameters": {
         "Type": "mysql",
         "Host": "localhost",
@@ -16,6 +16,17 @@
         "Port": 3306,
         "PoolSize": 5
       }
+    },
+    "HttpClient": {
+      "BaseUrl": "https://api.example.com",
+      "Headers": {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer seu_token_aqui",
+        "Custom-Header": "Valor personalizado"
+      },
+      "Timeout": 10,
+      "MaxRetries": 3,
+      "EnableCache": true
     }
   },
   "Constants": {
