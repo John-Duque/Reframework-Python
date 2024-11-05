@@ -1,6 +1,7 @@
 import logging
-from typing import List
+
 from selenium.webdriver.remote.webdriver import WebDriver
+
 from Components.google_page import GooglePage
 from Framework.Exceptions import BusinessException
 
@@ -17,18 +18,16 @@ class ProcessTransaction:
         self.logger = logger
         self.google_page = GooglePage(driver, logger)
 
-    def execute(self, transaction: List[object]) -> None:
-        for transaction in transaction:
-            try:
-                # Executa o processamento da transação com validações e tratamento de exceções.
-                self.logger.info(f"Processando transação {transaction[0]}")
-                self.google_page.open()
-                self.google_page.search(transaction[1])
-                self.logger.info(f" success {transaction[0]}")
+    def execute(self, transaction: object) -> None:
+        try:
+            # Executa o processamento da transação com validações e tratamento de exceções.
+            self.logger.info(f"Processando transação {transaction}")
+            self.google_page.open()
+            self.logger.info(f" success {transaction}")
 
-            except BusinessException as e:
-                self.logger.error(f"Erro de negócio na transação {transaction[0]}: {str(e)}")
-                raise e  # Relança a exceção para ser tratada em outro nível
+        except BusinessException as e:
+            self.logger.error(f"Erro de negócio na transação {transaction}: {str(e)}")
+            raise e  # Relança a exceção para ser tratada em outro nível
 
-            except Exception as e:
-                self.logger.error(f"Erro inesperado na transação {transaction['id']}: {str(e)}")
+        except Exception as e:
+            self.logger.error(f"Erro inesperado na transação {transaction}: {str(e)}")

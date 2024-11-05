@@ -1,7 +1,7 @@
-from Components.Query import Query
 from Framework.EndProcess import EndProcess
-from Framework.GetTransaction import GetTransaction
+from Framework.Exceptions import BusinessException
 from Framework.Init import Init
+from Framework.InitAllApplications import InitAllApplications
 from Framework.ProcessTransaction import ProcessTransaction
 from Framework.Selenium import Selenium
 
@@ -12,22 +12,21 @@ def main():
     config = init.get_config()
     logger = init.get_logger()
 
-    selenium = Selenium(logger, config["Settings"]["SeleniumBrowser"])
-
-    driver = selenium.get_driver()
-
-    db = Query(config, logger)
-
-    results = db.encherFila("SELECT * FROM credits")
-
-    get_transaction = GetTransaction(results)
+    driver = Selenium(logger, config["Settings"]["SeleniumBrowser"]).get_driver()
 
     process_transaction = ProcessTransaction(driver, logger)
 
     end_process = EndProcess(driver, logger)
 
-    process_transaction.execute(get_transaction.get_all())
+    transactions = InitAllApplications(driver,logger,config).work()
 
+    try:
+        for transaction in transactions:
+            process_transaction.execute(transaction)
+    except BusinessException as e:
+        logger.info(f"{e}")
+    except Exception as e:
+        logger.error(f"excessão de sistema: {e}")
     end_process.finalize()
 
 

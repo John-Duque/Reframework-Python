@@ -21,16 +21,3 @@ class Query(DatabaseConnection):
             else:
                 return None
 
-    def encher(self, query: str) -> Union[List[tuple], None]:
-        # Executa a query e retorna os resultados, garantindo que a conexão seja fechada corretamente.
-        # query (str): A query SQL a ser executada.
-        # Union[List[tuple], None]: Retorna a lista de resultados ou None em caso de erro.
-
-        # Usando o bloco 'with' para garantir a abertura e fechamento da conexão
-        with self as conn:
-            results = conn.execute_query(query)
-            if results:
-                return results
-            else:
-                return None
-
